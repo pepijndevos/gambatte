@@ -25,6 +25,7 @@
 #include "sound.h"
 #include "tima.h"
 #include "video.h"
+#include "externalmemory.h"
 
 namespace gambatte {
 

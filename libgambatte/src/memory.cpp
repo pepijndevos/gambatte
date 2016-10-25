@@ -22,6 +22,7 @@
 #include "sound.h"
 #include "video.h"
 #include <cstring>
+#include <stdio.h>
 
 namespace gambatte {
 
@@ -825,6 +826,9 @@ void Memory::nontrivial_ff_write(unsigned const p, unsigned data, unsigned long 
 		psg_.generateSamples(cc, isDoubleSpeed());
 		psg_.waveRamWrite(p & 0xF, data);
 		break;
+
+// start of graphics registers -------------------------------
+		
 	case 0x40:
 		if (ioamhram_[0x140] != data) {
 			if ((ioamhram_[0x140] ^ data) & lcdc_en) {
@@ -864,6 +868,7 @@ void Memory::nontrivial_ff_write(unsigned const p, unsigned data, unsigned long 
 		lcd_.scyChange(data, cc);
 		break;
 	case 0x43:
+		printf("SCX = %02x \n", data);
 		lcd_.scxChange(data, cc);
 		break;
 	case 0x45:
@@ -899,6 +904,8 @@ void Memory::nontrivial_ff_write(unsigned const p, unsigned data, unsigned long 
 	case 0x4B:
 		lcd_.wxChange(data, cc);
 		break;
+
+// end of graphics registers -------------------------------
 
 	case 0x4D:
 		if (isCgb())
