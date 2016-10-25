@@ -9,24 +9,61 @@
 
 namespace gambatte {
 
+	/** 
+	 * Provides a base implementation for a memory present on a remote device.
+	 */
 	class ExternalMemory {
 
 	public:
 		
+		/**
+		 * Determines whether the provided address should be forwarded to the remote device or not.
+		 * 
+		 * @param address 
+		 *	The address to determine.
+		 * @return 
+		 *  True whether the address should be forwarded, false otherwise.
+		 */
 		bool shouldForward(unsigned long address) {
 			return isVram(address) || isGpuRegister(address);
 		}
 
-		virtual void remoteWrite(unsigned long address, unsigned data) = 0;
+		/**
+		 * Writes data to the remote memory.
+		 * @param address
+		 *  The address to write the data to.
+		 * @param data
+		 *  The data to write.
+		 */
+		virtual void remoteWrite(unsigned address, unsigned data) = 0;
 
-		virtual unsigned remoteRead(unsigned long address) = 0;
+		/**
+		 * Reads data from the remote memory.
+		 * @param address
+		 *  The address to read data from.
+		 */
+		virtual unsigned remoteRead(unsigned address) = 0;
 
 	private:
-		static bool isVram(unsigned long address) {
+		/**
+		 * Determines whether an address is located in the VRAM of the gameboy.
+		 * @param address
+		 *  The address to determine.
+		 * @return
+		 *  True whether the address is located in VRAM, false otherwise.
+		 */
+		static bool isVram(unsigned address) {
 			return (address >= VRAM_START && address < VRAM_END);
 		}
 
-		static bool isGpuRegister(unsigned long address) {
+		/**
+		 * Determines whether an address points to a GPU register.
+		 * @param address
+		 *  The address to determine
+		 * @return
+		 *  True whether the address points to a GPU register, false otherwise.
+		 */
+		static bool isGpuRegister(unsigned address) {
 			return  (address >= REGISTERS_START && address < REGISTERS_END);
 		}
 	};

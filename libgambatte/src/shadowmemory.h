@@ -5,16 +5,36 @@
 
 namespace gambatte {
 
+	/**
+     * Provides an implementation for the ExternalMemory class, storing the memory on the same device.
+	 */
 	class ShadowMemory : public ExternalMemory {
 
 	public:
+		/**
+		 * Creates a new instance of the ShadowMemory class.
+		 */
 		ShadowMemory();
-		virtual void remoteWrite(unsigned long address, unsigned data);
-		virtual unsigned remoteRead(unsigned long address);
+
+		/**
+		 * Releases the shadow memory from memory. (memoryception :D).
+		 */
+		~ShadowMemory();
+
+		virtual void remoteWrite(unsigned address, unsigned data);
+
+		virtual unsigned remoteRead(unsigned address);
 
 	private:
+		/**
+  		 * Represents the VRAM of the GameBoy.
+  		 */
 		unsigned char* vram;
-		usnigned char* registers;
+
+		/**
+		 * Represents the GPU registers of the GameBoy.
+		 */
+		unsigned char* registers;
 	};
 
 }
