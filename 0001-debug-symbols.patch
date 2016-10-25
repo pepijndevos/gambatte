@@ -1,0 +1,35 @@
+From 07fcecb94faac3654e34e203c9b6f743f12e78b3 Mon Sep 17 00:00:00 2001
+From: Pepijn de Vos <pepijndevos@gmail.com>
+Date: Tue, 18 Oct 2016 15:06:43 +0200
+Subject: [PATCH] debug symbols
+
+---
+ gambatte_sdl/SConstruct | 2 +-
+ libgambatte/SConstruct  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gambatte_sdl/SConstruct b/gambatte_sdl/SConstruct
+index e1312f2..66bb59c 100644
+--- a/gambatte_sdl/SConstruct
++++ b/gambatte_sdl/SConstruct
+@@ -1,6 +1,6 @@
+ import subprocess
+ 
+-cflags   = ARGUMENTS.get('CFLAGS', '-Wall -Wextra -O2 -fomit-frame-pointer')
++cflags   = ARGUMENTS.get('CFLAGS', '-g -Wall -Wextra -O0 -fomit-frame-pointer')
+ cxxflags = ARGUMENTS.get('CXXFLAGS', cflags + ' -fno-exceptions -fno-rtti')
+ vars = Variables()
+ vars.Add('CC')
+diff --git a/libgambatte/SConstruct b/libgambatte/SConstruct
+index 66fa83a..be083b1 100644
+--- a/libgambatte/SConstruct
++++ b/libgambatte/SConstruct
+@@ -1,4 +1,4 @@
+-global_cflags = ARGUMENTS.get('CFLAGS', '-Wall -Wextra -O2 -fomit-frame-pointer')
++global_cflags = ARGUMENTS.get('CFLAGS', '-g -Wall -Wextra -O0 -fomit-frame-pointer')
+ global_cxxflags = ARGUMENTS.get('CXXFLAGS', global_cflags + ' -fno-exceptions -fno-rtti')
+ global_defines = ' -DHAVE_STDINT_H'
+ vars = Variables()
+-- 
+2.7.4
+
