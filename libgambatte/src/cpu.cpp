@@ -19,11 +19,12 @@
 #include "cpu.h"
 #include "memory.h"
 #include "savestate.h"
+#include "shadowmemory.h"
 
 namespace gambatte {
 
 CPU::CPU()
-: mem_(Interrupter(sp, pc_))
+: mem_(Interrupter(sp, pc_), new ShadowMemory())
 , cycleCounter_(0)
 , pc_(0x100)
 , sp(0xFFFE)

@@ -2,10 +2,10 @@
 #ifndef EXTERNAL_MEM
 #define EXTERNAL_MEM
 
-#define VRAM_START 			0x8000;
-#define VRAM_END 			0xA000;
-#define REGISTERS_START 	0xFF40;
-#define REGISTERS_END 		0xFF4B;
+#define VRAM_START 			0x8000
+#define VRAM_END 			0xA000
+#define REGISTERS_START 	0xFF40
+#define REGISTERS_END 		0xFF4B
 
 namespace gambatte {
 
@@ -21,11 +21,13 @@ namespace gambatte {
 		 * 
 		 * @param address 
 		 *	The address to determine.
+		 * @param lastByteOnly
+		 *  True if only the last byte of the address should be checked, false otherwise.
 		 * @return 
 		 *  True whether the address should be forwarded, false otherwise.
 		 */
-		bool shouldForward(unsigned long address) {
-			return isVram(address) || isGpuRegister(address);
+		bool shouldForward(unsigned long address, bool lastByteOnly) {
+			return isVram(address) || isGpuRegister(address, lastByteOnly);
 		}
 
 		/**
@@ -44,7 +46,7 @@ namespace gambatte {
 		 */
 		virtual unsigned remoteRead(unsigned address) = 0;
 
-	private:
+	protected:
 		/**
 		 * Determines whether an address is located in the VRAM of the gameboy.
 		 * @param address
@@ -63,8 +65,12 @@ namespace gambatte {
 		 * @return
 		 *  True whether the address points to a GPU register, false otherwise.
 		 */
-		static bool isGpuRegister(unsigned address) {
-			return  (address >= REGISTERS_START && address < REGISTERS_END);
+		static bool isGpuRegister(unsigned address, bool lastByteOnly) {
+			if (lastByteOnly) {
+				return ((address & 0xFF) >= (REGISTERS_START & 0xFF) && (address & 0xFF) < (REGISTERS_END & 0xFF));
+			} else {
+				return  (address >= REGISTERS_START && address < REGISTERS_END);
+			}
 		}
 	};
 

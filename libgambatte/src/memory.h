@@ -34,7 +34,7 @@ class FilterInfo;
 
 class Memory {
 public:
-	explicit Memory(Interrupter const &interrupter);
+	explicit Memory(Interrupter const &interrupter, ExternalMemory* externalMemory);
 	bool loaded() const { return cart_.loaded(); }
 	char const * romTitle() const { return cart_.romTitle(); }
 	PakInfo const pakInfo(bool multicartCompat) const { return cart_.pakInfo(multicartCompat); }
@@ -76,6 +76,10 @@ public:
 	}
 
 	void write(unsigned p, unsigned data, unsigned long cc) {
+		if (externalMemory_->shouldForward(p, false)) {
+			externalMemory_->remoteWrite(p, data);
+		}
+
 		if (cart_.wmem(p >> 12)) {
 			cart_.wmem(p >> 12)[p] = data;
 		} else
@@ -83,6 +87,10 @@ public:
 	}
 
 	void ff_write(unsigned p, unsigned data, unsigned long cc) {
+		if (externalMemory_->shouldForward(p, true)) {
+			externalMemory_->remoteWrite(p, data);
+		}
+
 		if (p - 0x80u < 0x7Fu) {
 			ioamhram_[p + 0x100] = data;
 		} else
@@ -111,6 +119,7 @@ public:
 	void updateInput();
 
 private:
+	ExternalMemory *externalMemory_;
 	Cartridge cart_;
 	unsigned char ioamhram_[0x200];
 	InputGetter *getInput_;

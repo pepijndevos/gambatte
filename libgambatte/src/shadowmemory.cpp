@@ -1,45 +1,39 @@
 
 #include <stdio.h>
-
+#include <stdlib.h>
 #include "shadowmemory.h"
 
-ShadowMemory::ShadowMemory() {
-	// Initialize shadow memory variables.
-	this->vram = (unsigned char*) malloc(VRAM_END - VRAM_START);
-	this->registers = (unsigned char*) malloc(REGISTERS_END - REGISTERS_START);
-}
+namespace gambatte {
 
-ShadowMemory::~ShadowMemory() {
-	// Release the shadow memory.
-	free(this->vram);
-	free(this->registers);
-}
-
-void ShadowMemory::remoteWrite(unsigned address, unsigned data) {
-	// Debugging purposes:
-	printf("*(%p) = %02x", address, data);
-
-	// Decide whether the address is in VRAM or a GPU register, and write the data to it.
-	if (isVram(address)) {
-		this->vram[address - VRAM_START] = data;
-	} else if (isGpuRegister(address)) {
-		this->registers[address - REGISTERS_START] = data;
-	}
-}
-
-unsigned ShadowMemory::remoteRead(unsigned address) {
-	// Debugging purposes:
-	printf("return *(%p)", address);
-
-	// Decide whether the address is in VRAM or a GPU register, and read the data to it.
-	if (isVram(address)) {
-		return this->vram[address - VRAM_START];
-	} else if (isGpuRegister(address)) {
-		return this->registers[address - REGISTERS_START];
+	ShadowMemory::ShadowMemory() {
+		// Initialize shadow memory variables.
+		this->vram = (unsigned char*) malloc(VRAM_END - VRAM_START);
+		this->registers = (unsigned char*) malloc(REGISTERS_END - REGISTERS_START);
 	}
 
-	return 0;
-}
+	ShadowMemory::~ShadowMemory() {
+		// Release the shadow memory.
+		free(this->vram);
+		free(this->registers);
+	}
 
-// VRAM: 0x8000 -> 0xA000
-// I/O regs: 0xFF40 -> 0xFF4B
+	void ShadowMemory::remoteWrite(unsigned address, unsigned data) {
+		// Decide whether the address is in VRAM or a GPU register, and write the data to it.
+		if (isVram(address)) {
+			this->vram[address - VRAM_START] = data;
+		} else if (isGpuRegister(address, true)) {
+			this->registers[(address & 0xFF) - (REGISTERS_START & 0xFF)] = data;
+		}
+	}
+
+	unsigned ShadowMemory::remoteRead(unsigned address) {
+		// Decide whether the address is in VRAM or a GPU register, and read the data to it.
+		if (isVram(address)) {
+			return this->vram[address - VRAM_START];
+		} else if (isGpuRegister(address, true)) {
+			return this->registers[(address & 0xFF) - (REGISTERS_START & 0xFF)];
+		}
+
+		return 0;
+	}
+}

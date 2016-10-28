@@ -26,7 +26,7 @@
 
 namespace gambatte {
 
-Memory::Memory(Interrupter const &interrupter)
+Memory::Memory(Interrupter const &interrupter, ExternalMemory *externalMemory)
 : getInput_(0)
 , divLastUpdate_(0)
 , lastOamDmaUpdate_(disabled_time)
@@ -38,6 +38,7 @@ Memory::Memory(Interrupter const &interrupter)
 , serialCnt_(0)
 , blanklcd_(false)
 {
+	this->externalMemory_ = externalMemory;
 	intreq_.setEventTime<intevent_blit>(144 * 456ul);
 	intreq_.setEventTime<intevent_end>(0);
 }
