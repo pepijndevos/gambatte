@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "fpgamemory.h"
 #include <wiringPiSPI.h>
+#include <unistd.h>
 
 #define CHANNEL 0
 
@@ -10,25 +11,32 @@ namespace gambatte {
 
 	FPGAMemory::FPGAMemory() {
 		if (wiringPiSPISetup(CHANNEL, 32000000) < 0) {
-                printf ("SPI Setup failed.\n");
-        }
+	                printf ("SPI Setup failed.\n");
+        	}
 	}
 
 	FPGAMemory::~FPGAMemory() {
 	}
 
-	void ShadowMemory::remoteWrite(unsigned address, unsigned data) {
+	void FPGAMemory::remoteWrite(unsigned address, unsigned data) {
+		//printf("remoteWrite(%04x, %02x)\n", address, data);
 		unsigned char* buffer = (unsigned char*) malloc(3);
 
-		buffer[0] = (address & 0xFF);
-		buffer[1] = ((address >> 8) & 0xFF);
+		if (isVram(address)) {
+			buffer[0] = ((address >> 8) & 0xFF);
+		} else {
+			buffer[0] = 0xFF;
+		}
+
+		buffer[1] = (address & 0xFF);
 		buffer[2] = (data & 0xFF);
 
 		wiringPiSPIDataRW(CHANNEL, buffer, 3);
-        free(buffer);
+	        free(buffer);
+//		sleep(1);
 	}
 
-	unsigned ShadowMemory::remoteRead(unsigned address) {
+	unsigned FPGAMemory::remoteRead(unsigned address) {
 
 		return 0;
 	}

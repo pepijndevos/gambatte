@@ -1,7 +1,7 @@
 global_cflags = ARGUMENTS.get('CFLAGS', '-g -Wall -Wextra -O0 -fomit-frame-pointer')
 global_cxxflags = ARGUMENTS.get('CXXFLAGS', global_cflags + ' -fno-exceptions -fno-rtti')
 global_defines = ' -DHAVE_STDINT_H'
-libraries = ['pthread']
+libraries = ['pthread', 'wiringPi']
 library_paths = ''
 
 vars = Variables()
@@ -23,6 +23,7 @@ sourceFiles = Split('''
 			src/loadres.cpp
 			src/memory.cpp
 			src/shadowmemory.cpp
+			src/fpgamemory.cpp
 			src/sound.cpp
 			src/state_osd_elements.cpp
 			src/statesaver.cpp

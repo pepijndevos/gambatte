@@ -5,7 +5,7 @@ cxxflags = ARGUMENTS.get('CXXFLAGS', cflags + ' -fno-exceptions -fno-rtti')
 vars = Variables()
 vars.Add('CC')
 vars.Add('CXX')
-libraries = ['pthread', "SDL", "z"]
+libraries = ['pthread', "SDL", "z", 'wiringPi']
 library_paths = ''
 
 
