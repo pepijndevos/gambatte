@@ -642,6 +642,8 @@ int GambatteSdl::exec(int const argc, char const *const argv[]) {
 			}
 		}
 	}
+	
+	gambatte.enterDebugMode();
 
 	if (LoadRes const error =
 			gambatte.load(argv[loadIndex],

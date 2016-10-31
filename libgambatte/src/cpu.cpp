@@ -20,11 +20,16 @@
 #include "memory.h"
 #include "savestate.h"
 #include "shadowmemory.h"
+#include "fpgamemory.h"
+#include <unistd.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 namespace gambatte {
 
 CPU::CPU()
-: mem_(Interrupter(sp, pc_), new ShadowMemory())
+: mem_(Interrupter(sp, pc_), new FPGAMemory())
 , cycleCounter_(0)
 , pc_(0x100)
 , sp(0xFFFE)
@@ -42,6 +47,50 @@ CPU::CPU()
 , skip_(false)
 {
 }
+
+void* debugThread(void* arg) {
+	CPU* cpu = (CPU *) arg;
+
+	bool lastTimeInSync = true;
+
+	while (true) {
+		
+		sleep(1);
+
+		bool inSync = true;
+		for (int i = VRAM_START; i < VRAM_END; i++) { 
+			unsigned actualData = cpu->readMemory(i);
+			unsigned externalData = cpu->getMemory()->getExternalMemory()->remoteRead(i);
+			if (actualData != externalData) {
+				inSync = false;
+				break;
+			}
+		}
+
+		if (inSync && !lastTimeInSync) {
+			printf("Memory in sync again!\n");
+			fflush(stdout);
+			lastTimeInSync = true;
+		} else if (!inSync) {
+			printf("Memory NOT in sync!\n");
+			fflush(stdout);
+			lastTimeInSync = false;
+		}
+		
+	}
+}
+
+void CPU::enterDebugMode() {
+	pthread_t threadId;
+	// if (pthread_create(&threadId, NULL, &debugThread, this) != 0) {
+	// 	printf("Failed to create debug thread");
+	// }
+}
+
+unsigned CPU::readMemory(unsigned address) {
+	return mem_.read(address, cycleCounter_, true);
+}
+
 
 long CPU::runFor(unsigned long const cycles) {
 	process(cycles);

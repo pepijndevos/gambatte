@@ -1,13 +1,16 @@
 global_cflags = ARGUMENTS.get('CFLAGS', '-g -Wall -Wextra -O0 -fomit-frame-pointer')
 global_cxxflags = ARGUMENTS.get('CXXFLAGS', global_cflags + ' -fno-exceptions -fno-rtti')
 global_defines = ' -DHAVE_STDINT_H'
+libraries = ['pthread']
+library_paths = ''
+
 vars = Variables()
 vars.Add('CC')
 vars.Add('CXX')
 
 env = Environment(CPPPATH = ['src', 'include', '../common'],
-                  CFLAGS = global_cflags + global_defines,
-                  CXXFLAGS = global_cxxflags + global_defines,
+                  CFLAGS = global_cflags + global_defines ,
+                  CXXFLAGS = global_cxxflags + global_defines + ' -lpthread',
                   variables = vars)
 
 sourceFiles = Split('''
@@ -54,4 +57,4 @@ else:
 
 conf.Finish()
 
-env.Library('gambatte', sourceFiles)
+env.Library('gambatte', sourceFiles, LIBS = libraries);

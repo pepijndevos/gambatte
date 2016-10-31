@@ -71,6 +71,11 @@ public:
 	void setGameGenie(std::string const &codes) { mem_.setGameGenie(codes); }
 	void setGameShark(std::string const &codes) { mem_.setGameShark(codes); }
 
+	void enterDebugMode();
+
+	unsigned readMemory(unsigned address);
+
+	Memory* getMemory() { return &mem_; }
 private:
 	Memory mem_;
 	unsigned long cycleCounter_;

@@ -549,14 +549,20 @@ static bool isInOamDmaConflictArea(OamDmaSrc const oamDmaSrc, unsigned const p, 
 }
 
 unsigned Memory::nontrivial_read(unsigned const p, unsigned long const cc) {
+	return nontrivial_read(p, cc, false);
+}
+
+unsigned Memory::nontrivial_read(unsigned const p, unsigned long const cc, bool skipOamUpdate) {
 	if (p < 0xFF80) {
-		if (lastOamDmaUpdate_ != disabled_time) {
-			updateOamDma(cc);
+		if (!skipOamUpdate) {
+			if (lastOamDmaUpdate_ != disabled_time) {
+				updateOamDma(cc);
 
-			if (isInOamDmaConflictArea(cart_.oamDmaSrc(), p, isCgb()) && oamDmaPos_ < 0xA0)
-				return ioamhram_[oamDmaPos_];
+				if (isInOamDmaConflictArea(cart_.oamDmaSrc(), p, isCgb()) && oamDmaPos_ < 0xA0)
+					return ioamhram_[oamDmaPos_];
+			}
 		}
-
+		
 		if (p < 0xC000) {
 			if (p < 0x8000)
 				return cart_.romdata(p >> 14)[p];
@@ -869,7 +875,6 @@ void Memory::nontrivial_ff_write(unsigned const p, unsigned data, unsigned long 
 		lcd_.scyChange(data, cc);
 		break;
 	case 0x43:
-		printf("SCX = %02x \n", data);
 		lcd_.scxChange(data, cc);
 		break;
 	case 0x45:

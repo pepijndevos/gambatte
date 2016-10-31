@@ -5,6 +5,9 @@ cxxflags = ARGUMENTS.get('CXXFLAGS', cflags + ' -fno-exceptions -fno-rtti')
 vars = Variables()
 vars.Add('CC')
 vars.Add('CXX')
+libraries = ['pthread', "SDL", "z"]
+library_paths = ''
+
 
 env = Environment(CPPPATH = ['src', '../libgambatte/include', '../common'],
                   CFLAGS = cflags,
@@ -55,4 +58,4 @@ if Dir('../.git').exists():
 env.Program('gambatte_sdl',
             [env.Object('src/gambatte_sdl.cpp',
                         CPPDEFINES = env['CPPDEFINES'] + [version_str_def])]
-            + sourceFiles)
+            + sourceFiles, LIBS = libraries)

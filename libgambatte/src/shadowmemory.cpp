@@ -32,6 +32,8 @@ namespace gambatte {
 			return this->vram[address - VRAM_START];
 		} else if (isGpuRegister(address, true)) {
 			return this->registers[(address & 0xFF) - (REGISTERS_START & 0xFF)];
+		} else {
+			printf("NOT A VRAM ADDRESS %08x", address);
 		}
 
 		return 0;

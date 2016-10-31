@@ -209,4 +209,8 @@ void GB::setGameShark(std::string const &codes) {
 	p_->cpu.setGameShark(codes);
 }
 
+void GB::enterDebugMode() {
+	p_->cpu.enterDebugMode();
+}
+
 }

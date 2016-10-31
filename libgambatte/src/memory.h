@@ -71,6 +71,10 @@ public:
 		return p < 0x80 ? nontrivial_ff_read(p, cc) : ioamhram_[p + 0x100];
 	}
 
+	unsigned read(unsigned p, unsigned long cc, bool skipOamUpdate) {
+		return cart_.rmem(p >> 12) ? cart_.rmem(p >> 12)[p] : nontrivial_read(p, cc, skipOamUpdate);
+	}
+
 	unsigned read(unsigned p, unsigned long cc) {
 		return cart_.rmem(p >> 12) ? cart_.rmem(p >> 12)[p] : nontrivial_read(p, cc);
 	}
@@ -118,6 +122,16 @@ public:
 	void setGameShark(std::string const &codes) { interrupter_.setGameShark(codes); }
 	void updateInput();
 
+	void enterDebugMode();
+
+	ExternalMemory* getExternalMemory() {
+		return externalMemory_;
+	}
+
+	LCD* getLCD() {
+		return &lcd_;
+	}
+
 private:
 	ExternalMemory *externalMemory_;
 	Cartridge cart_;
@@ -144,6 +158,7 @@ private:
 	unsigned char const * oamDmaSrcPtr() const;
 	unsigned nontrivial_ff_read(unsigned p, unsigned long cycleCounter);
 	unsigned nontrivial_read(unsigned p, unsigned long cycleCounter);
+	unsigned nontrivial_read(unsigned const p, unsigned long const cc, bool skipOamUpdate);
 	void nontrivial_ff_write(unsigned p, unsigned data, unsigned long cycleCounter);
 	void nontrivial_write(unsigned p, unsigned data, unsigned long cycleCounter);
 	void updateSerial(unsigned long cc);

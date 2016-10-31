@@ -42,6 +42,12 @@ public:
 		                           MBCs disguised as MBC1. */
 	};
 
+	/**
+	  * Enters the debug mode. Spawns a thread that periodically checks whether the shadow memory
+	  * is in sync with the actual memory.
+	  */
+	void enterDebugMode();
+
 	 /*
 	  * Load ROM image.
 	  *
