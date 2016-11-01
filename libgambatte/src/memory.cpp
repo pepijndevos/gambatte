@@ -376,13 +376,20 @@ void Memory::updateInput() {
 	unsigned state = 0xF;
 
 	if ((ioamhram_[0x100] & 0x30) != 0x30 && getInput_) {
-		unsigned input = (*getInput_)();
-		unsigned dpad_state = ~input >> 4;
-		unsigned button_state = ~input;
-		if (!(ioamhram_[0x100] & 0x10))
-			state &= dpad_state;
-		if (!(ioamhram_[0x100] & 0x20))
-			state &= button_state;
+
+		if (!(ioamhram_[0x100] & 0x10)) {
+			state &= ~getInput_->getState(1) >> 4;
+		} else if (!(ioamhram_[0x100] & 0x20)) {
+			state &= ~getInput_->getState(0);
+		}
+
+//		unsigned input = (*getInput_)();
+//		unsigned dpad_state = ~input >> 4;
+//		unsigned button_state = ~input;
+//		if (!(ioamhram_[0x100] & 0x10))
+//			state &= dpad_state;
+//		if (!(ioamhram_[0x100] & 0x20))
+//			state &= button_state;
 	}
 
 	if (state != 0xF && (ioamhram_[0x100] & 0xF) == 0xF)

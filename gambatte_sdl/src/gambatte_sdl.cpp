@@ -441,6 +441,9 @@ public:
 
 	GetInput() : is(0) {}
 	virtual unsigned operator()() { return is; }
+	virtual unsigned getState(int lane) {
+		return is;
+	}
 };
 
 class SdlIniter : Uncopyable {
