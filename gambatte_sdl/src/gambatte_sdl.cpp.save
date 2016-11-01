@@ -444,7 +444,7 @@ public:
 	GetInput() : is(0) {}
 	virtual unsigned operator()() { return is; }
 	virtual unsigned getState(int lane) {
-		return is;
+		return lane == 0 ? (is & 0xF) : (is & 0xF0);
 	}
 };
 
@@ -486,22 +486,22 @@ private:
 class GambatteSdl {
 public:
 	GambatteSdl() { 
-		std::vector<InputGetter*> *inputs = new std::vector<InputGetter*>();
+		std::vector<InputGetter*>* inputs = new std::vector<InputGetter*>();
+		inputs->push_back(&customInputGetter);
 		inputs->push_back(&inputGetter);
-		inputs->push_back(&keypadInputGetter);
-
 		multiPad = new MultipadInputGetter(inputs);
-		gambatte.setInputGetter(multiPad);
-
+		
+		gambatte.setInputGetter(multiPad); 
 	}
+
 	int exec(int argc, char const *const argv[]);
 
 private:
 	typedef std::multimap<SDLKey,  InputGetter::Button> keymap_t;
 	typedef std::multimap<JoyData, InputGetter::Button> jmap_t;
 
+	KeypadInputGetter customInputGetter;
 	GetInput inputGetter;
-	KeypadInputGetter keypadInputGetter;
 	MultipadInputGetter *multiPad;
 
 	GB gambatte;
@@ -516,7 +516,7 @@ private:
 };
 
 static void printOptionUsage(DescOption const *const o) {
-	std::printf("  ");
+	st::printf("  ");
 
 	if (char c = o->character())
 		std::printf("-%c, ", c);
@@ -550,7 +550,7 @@ static void printValidInputKeys() {
 
 static void printControls() {
 	std::puts("Controls:");
-	std::puts("TAB\t- fast-forward");
+	std::puts("TAB\t- fast-clforward");
 	std::puts("Ctrl-f\t- toggle full screen");
 	std::puts("Ctrl-r\t- reset");
 	std::puts("F5\t- save state");

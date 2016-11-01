@@ -2,8 +2,10 @@
 #ifndef EXTERNAL_MEM
 #define EXTERNAL_MEM
 
-#define VRAM_START 			0x8000
-#define VRAM_END 			0xA000
+#define VRAM_START 		0x8000
+#define VRAM_END 		0xA000
+#define SPRITE_START		0xFE00
+#define SPRITE_END		0xFE9F
 #define REGISTERS_START 	0xFF40
 #define REGISTERS_END 		0xFF4B
 
@@ -27,7 +29,7 @@ namespace gambatte {
 		 *  True whether the address should be forwarded, false otherwise.
 		 */
 		bool shouldForward(unsigned long address, bool lastByteOnly) {
-			return isVram(address) || isGpuRegister(address, lastByteOnly);
+			return isVram(address) || isSprite(address) || isGpuRegister(address, lastByteOnly);
 		}
 
 		/**
@@ -56,6 +58,10 @@ namespace gambatte {
 		 */
 		static bool isVram(unsigned address) {
 			return (address >= VRAM_START && address < VRAM_END);
+		}
+
+		static bool isSprite(unsigned address) {
+			return (address >= SPRITE_START && address < SPRITE_END);
 		}
 
 		/**

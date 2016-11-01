@@ -22,7 +22,11 @@ namespace gambatte {
 		//printf("remoteWrite(%04x, %02x)\n", address, data);
 		unsigned char* buffer = (unsigned char*) malloc(3);
 
-		if (isVram(address)) {
+		if (isSprite(address)) {
+			printf("sprite write at %04x: %02x\n", address, data);
+		}
+
+		if (isVram(address) || isSprite(address)) {
 			buffer[0] = ((address >> 8) & 0xFF);
 		} else {
 			buffer[0] = 0xFF;
