@@ -1,7 +1,7 @@
 #ifndef KEYPADINPUTGETTER_H
 #define KEYPADINPUTGETTER_H
 
-#include <inputgetter.h>
+#include <gambatte.h>
 
 class KeypadInputGetter : public InputGetter {
 public:
@@ -9,8 +9,9 @@ public:
 	~KeypadInputGetter();
 
 	virtual unsigned operator()();
+	virtual unsigned getState(int lane);
 private:
 	unsigned currentLane_;
-}
+};
 
 #endif
