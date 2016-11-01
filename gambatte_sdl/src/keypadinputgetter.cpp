@@ -12,6 +12,8 @@
 #define PIN_LANE_0 			4
 #define PIN_LANE_1 			5
 
+namespace gambatte {
+
 KeypadInputGetter::KeypadInputGetter() {
 	wiringPiSetup();
 	
@@ -31,7 +33,7 @@ KeypadInputGetter::~KeypadInputGetter() {
 }
 
 
-virtual unsigned KeypadInputGetter::getState(int lane) {
+unsigned KeypadInputGetter::getState(int lane) {
 	unsigned result = 0;
 
 	if (lane == 0) {
@@ -43,22 +45,22 @@ virtual unsigned KeypadInputGetter::getState(int lane) {
 	}
 
 	if (digitalRead(PIN_B_OR_LEFT) == LOW) {
-		result |= (lane ? Button.B : Button.LEFT);
+		result |= (lane ? InputGetter::B : InputGetter::LEFT);
 	}
 
 	if (digitalRead(PIN_SELECT_OR_UP) == LOW) {
-		result |= (lane ? Button.SELECT : Button.UP);
+		result |= (lane ? InputGetter::SELECT : InputGetter::UP);
 	}
 
 	if (digitalRead(PIN_START_OR_DOWN) == LOW) {
-		result |= (lane ? Button.START : Button.DOWN);
+		result |= (lane ? InputGetter::START : InputGetter::DOWN);
 	}
 
 	if (digitalRead(PIN_A_OR_RIGHT) == LOW) {
-		result |= (lane ? Button.A: Button.RIGHT);
+		result |= (lane ? InputGetter::A: InputGetter::RIGHT);
 	}
 
-	return result;
+	return 0;
 }
 
 //     | D13    | D14
@@ -67,5 +69,7 @@ virtual unsigned KeypadInputGetter::getState(int lane) {
 // D10 | Select | Up
 // D11 | Start  | Down
 // D12 | A      | Right
+
+}
 
 #endif
