@@ -38,6 +38,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include "multipadinputgetter.h"
 
 namespace {
 
@@ -483,7 +484,14 @@ private:
 
 class GambatteSdl {
 public:
-	GambatteSdl() { gambatte.setInputGetter(&inputGetter); }
+	GambatteSdl() { 
+		std::vector<InputGetter*> *inputs = new std::vector<InputGetter*>();
+		inputs->push_back(&inputGetter);
+		
+		multiPad = new MultipadInputGetter(inputs);
+		gambatte.setInputGetter(multiPad);
+
+	}
 	int exec(int argc, char const *const argv[]);
 
 private:
@@ -491,6 +499,8 @@ private:
 	typedef std::multimap<JoyData, InputGetter::Button> jmap_t;
 
 	GetInput inputGetter;
+	MultipadInputGetter *multiPad;
+
 	GB gambatte;
 	keymap_t keyMap;
 	jmap_t jbMap;
