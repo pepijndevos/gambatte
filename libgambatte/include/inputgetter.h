@@ -28,8 +28,21 @@ public:
 
 	virtual ~InputGetter() {}
 
-	/** @return A|B|SELECT|START|RIGHT|LEFT|UP|DOWN if those buttons are pressed. */
-	virtual unsigned operator()() = 0;
+	virtual unsigned operator()() {
+		return 0;
+	}
+
+	/** 
+	 * Gets the button state of the controller.
+	 * @param lane
+	 *   The lane of the controller to read. 
+	 *   When 0, the state of the A, B, SELECT and START buttons are read. 
+	 *   When 1, the state of the RIGHT, LEFT, UP and DOWN buttons are read.
+	 * @return 
+	 *   A|B|SELECT|START or RIGHT|LEFT|UP|DOWN if those buttons are pressed. */
+	virtual unsigned getState(int lane) {
+		return 0;
+	}
 };
 
 }

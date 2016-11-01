@@ -38,6 +38,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include "keypadinputgetter.h"
 
 namespace {
 
@@ -487,14 +488,14 @@ private:
 	typedef std::multimap<SDLKey,  InputGetter::Button> keymap_t;
 	typedef std::multimap<JoyData, InputGetter::Button> jmap_t;
 
-	GetInput inputGetter;
+	KeypadInputGetter inputGetter;
 	GB gambatte;
 	keymap_t keyMap;
 	jmap_t jbMap;
 	jmap_t jaMap;
 	jmap_t jhMap;
 
-	bool handleEvents(BlitterWrapper &blitter);
+	// bool handleEvents(BlitterWrapper &blitter);
 	int run(long sampleRate, int latency, int periods,
 	        ResamplerInfo const &resamplerInfo, BlitterWrapper &blitter);
 };
@@ -534,7 +535,7 @@ static void printValidInputKeys() {
 
 static void printControls() {
 	std::puts("Controls:");
-	std::puts("TAB\t- fast-forward");
+	std::puts("TAB\t- fast-clforward");
 	std::puts("Ctrl-f\t- toggle full screen");
 	std::puts("Ctrl-r\t- reset");
 	std::puts("F5\t- save state");
@@ -685,102 +686,102 @@ int GambatteSdl::exec(int const argc, char const *const argv[]) {
 	           resamplerOption.resampler(), blitter);
 }
 
-bool GambatteSdl::handleEvents(BlitterWrapper &blitter) {
-	JoyData jd;
-	SDL_Event e;
+// bool GambatteSdl::handleEvents(BlitterWrapper &blitter) {
+// 	JoyData jd;
+// 	SDL_Event e;
 
-	while (SDL_PollEvent(&e)) switch (e.type) {
-	case SDL_JOYAXISMOTION:
-		jd.dev_num = e.jaxis.which;
-		jd.num = e.jaxis.axis;
-		jd.dir = e.jaxis.value < -8192
-		       ? JoyData::dir_down
-		       : (e.jaxis.value > 8192 ? JoyData::dir_up : JoyData::dir_centered);
+// 	while (SDL_PollEvent(&e)) switch (e.type) {
+// 	case SDL_JOYAXISMOTION:
+// 		jd.dev_num = e.jaxis.which;
+// 		jd.num = e.jaxis.axis;
+// 		jd.dir = e.jaxis.value < -8192
+// 		       ? JoyData::dir_down
+// 		       : (e.jaxis.value > 8192 ? JoyData::dir_up : JoyData::dir_centered);
 
-		for (std::pair<jmap_t::iterator, jmap_t::iterator> range =
-				jaMap.equal_range(jd); range.first != range.second; ++range.first) {
-			if (jd.dir == range.first->first.dir)
-				inputGetter.is |= range.first->second;
-			else
-				inputGetter.is &= ~range.first->second;
-		}
+// 		for (std::pair<jmap_t::iterator, jmap_t::iterator> range =
+// 				jaMap.equal_range(jd); range.first != range.second; ++range.first) {
+// 			// if (jd.dir == range.first->first.dir)
+// 			// 	inputGetter.is |= range.first->second;
+// 			// else
+// 			// 	inputGetter.is &= ~range.first->second;
+// 		}
 
-		break;
-	case SDL_JOYBUTTONDOWN:
-	case SDL_JOYBUTTONUP:
-		jd.dev_num = e.jbutton.which;
-		jd.num = e.jbutton.button;
+// 		break;
+// 	case SDL_JOYBUTTONDOWN:
+// 	case SDL_JOYBUTTONUP:
+// 		jd.dev_num = e.jbutton.which;
+// 		jd.num = e.jbutton.button;
 
-		for (std::pair<jmap_t::iterator, jmap_t::iterator> range =
-				jbMap.equal_range(jd); range.first != range.second; ++range.first) {
-			if (e.jbutton.state)
-				inputGetter.is |= range.first->second;
-			else
-				inputGetter.is &= ~range.first->second;
-		}
+// 		for (std::pair<jmap_t::iterator, jmap_t::iterator> range =
+// 				jbMap.equal_range(jd); range.first != range.second; ++range.first) {
+// 			if (e.jbutton.state)
+// 				inputGetter.is |= range.first->second;
+// 			else
+// 				inputGetter.is &= ~range.first->second;
+// 		}
 
-		break;
-	case SDL_JOYHATMOTION:
-		jd.dev_num = e.jhat.which;
-		jd.num = e.jhat.hat;
+// 		break;
+// 	case SDL_JOYHATMOTION:
+// 		jd.dev_num = e.jhat.which;
+// 		jd.num = e.jhat.hat;
 
-		for (std::pair<jmap_t::iterator, jmap_t::iterator> range =
-				jaMap.equal_range(jd); range.first != range.second; ++range.first) {
-			if (e.jhat.value & range.first->first.dir)
-				inputGetter.is |= range.first->second;
-			else
-				inputGetter.is &= ~range.first->second;
-		}
+// 		for (std::pair<jmap_t::iterator, jmap_t::iterator> range =
+// 				jaMap.equal_range(jd); range.first != range.second; ++range.first) {
+// 			if (e.jhat.value & range.first->first.dir)
+// 				inputGetter.is |= range.first->second;
+// 			else
+// 				inputGetter.is &= ~range.first->second;
+// 		}
 
-		break;
-	case SDL_KEYDOWN:
-		if (e.key.keysym.mod & KMOD_CTRL) {
-			switch (e.key.keysym.sym) {
-			case SDLK_f: blitter.toggleFullScreen(); break;
-			case SDLK_r: gambatte.reset(); break;
-			default: break;
-			}
-		} else {
-			switch (e.key.keysym.sym) {
-			case SDLK_ESCAPE:
-				return true;
-			case SDLK_F5:
-				gambatte.saveState(blitter.inBuf().pixels, blitter.inBuf().pitch);
-				break;
-			case SDLK_F6: gambatte.selectState(gambatte.currentState() - 1); break;
-			case SDLK_F7: gambatte.selectState(gambatte.currentState() + 1); break;
-			case SDLK_F8: gambatte.loadState(); break;
-			case SDLK_0: gambatte.selectState(0); break;
-			case SDLK_1: gambatte.selectState(1); break;
-			case SDLK_2: gambatte.selectState(2); break;
-			case SDLK_3: gambatte.selectState(3); break;
-			case SDLK_4: gambatte.selectState(4); break;
-			case SDLK_5: gambatte.selectState(5); break;
-			case SDLK_6: gambatte.selectState(6); break;
-			case SDLK_7: gambatte.selectState(7); break;
-			case SDLK_8: gambatte.selectState(8); break;
-			case SDLK_9: gambatte.selectState(9); break;
-			default: break;
-			}
-		}
-		// fallthrough
-	case SDL_KEYUP:
-		for (std::pair<keymap_t::iterator, keymap_t::iterator> range =
-				keyMap.equal_range(e.key.keysym.sym);
-				range.first != range.second; ++range.first) {
-			if (e.key.state)
-				inputGetter.is |= range.first->second;
-			else
-				inputGetter.is &= ~range.first->second;
-		}
+// 		break;
+// 	case SDL_KEYDOWN:
+// 		if (e.key.keysym.mod & KMOD_CTRL) {
+// 			switch (e.key.keysym.sym) {
+// 			case SDLK_f: blitter.toggleFullScreen(); break;
+// 			case SDLK_r: gambatte.reset(); break;
+// 			default: break;
+// 			}
+// 		} else {
+// 			switch (e.key.keysym.sym) {
+// 			case SDLK_ESCAPE:
+// 				return true;
+// 			case SDLK_F5:
+// 				gambatte.saveState(blitter.inBuf().pixels, blitter.inBuf().pitch);
+// 				break;
+// 			case SDLK_F6: gambatte.selectState(gambatte.currentState() - 1); break;
+// 			case SDLK_F7: gambatte.selectState(gambatte.currentState() + 1); break;
+// 			case SDLK_F8: gambatte.loadState(); break;
+// 			case SDLK_0: gambatte.selectState(0); break;
+// 			case SDLK_1: gambatte.selectState(1); break;
+// 			case SDLK_2: gambatte.selectState(2); break;
+// 			case SDLK_3: gambatte.selectState(3); break;
+// 			case SDLK_4: gambatte.selectState(4); break;
+// 			case SDLK_5: gambatte.selectState(5); break;
+// 			case SDLK_6: gambatte.selectState(6); break;
+// 			case SDLK_7: gambatte.selectState(7); break;
+// 			case SDLK_8: gambatte.selectState(8); break;
+// 			case SDLK_9: gambatte.selectState(9); break;
+// 			default: break;
+// 			}
+// 		}
+// 		// fallthrough
+// 	case SDL_KEYUP:
+// 		for (std::pair<keymap_t::iterator, keymap_t::iterator> range =
+// 				keyMap.equal_range(e.key.keysym.sym);
+// 				range.first != range.second; ++range.first) {
+// 			if (e.key.state)
+// 				inputGetter.is |= range.first->second;
+// 			else
+// 				inputGetter.is &= ~range.first->second;
+// 		}
 
-		break;
-	case SDL_QUIT:
-		return true;
-	}
+// 		break;
+// 	case SDL_QUIT:
+// 		return true;
+// 	}
 
-	return false;
-}
+// 	return false;
+// }
 
 static std::size_t const gb_samples_per_frame = 35112;
 static std::size_t const gambatte_max_overproduction = 2064;
@@ -802,8 +803,8 @@ int GambatteSdl::run(long const sampleRate, int const latency, int const periods
 	SDL_PauseAudio(0);
 
 	for (;;) {
-		if (handleEvents(blitter))
-			return 0;
+		// if (handleEvents(blitter))
+		// 	return 0;
 
 		BlitterWrapper::Buf const &vbuf = blitter.inBuf();
 		std::size_t runsamples = gb_samples_per_frame - bufsamples;
