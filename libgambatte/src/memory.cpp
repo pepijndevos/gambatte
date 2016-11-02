@@ -23,6 +23,7 @@
 #include "video.h"
 #include <cstring>
 #include <stdio.h>
+#include <stdlib.h>
 
 namespace gambatte {
 
@@ -205,6 +206,7 @@ unsigned long Memory::event(unsigned long cc) {
 		break;
 	case intevent_dma:
 		{
+			printf("int event DMA\n");
 			bool const doubleSpeed = isDoubleSpeed();
 			unsigned dmaSrc = dmaSource_;
 			unsigned dmaDest = dmaDestination_;
@@ -244,6 +246,9 @@ unsigned long Memory::event(unsigned long cc) {
 								startOamDma(lOamDmaUpdate - 1);
 
 							ioamhram_[src & 0xFF] = data;
+							printf("ioamhram[%02x] = %02x\n", src & 0xFF, data);
+							externalMemory_->remoteWrite(0xFE00 + (src & 0xFF), data);
+
 						} else if (oamDmaPos_ == 0xA0) {
 							endOamDma(lOamDmaUpdate - 1);
 							lOamDmaUpdate = disabled_time;
@@ -376,10 +381,11 @@ void Memory::updateInput() {
 	unsigned state = 0xF;
 
 	if ((ioamhram_[0x100] & 0x30) != 0x30 && getInput_) {
-
 		if (!(ioamhram_[0x100] & 0x10)) {
+			//printf("lane = 1\n");
 			state &= ~getInput_->getState(1) >> 4;
 		} else if (!(ioamhram_[0x100] & 0x20)) {
+			//printf("lane = 0\n");
 			state &= ~getInput_->getState(0);
 		}
 
@@ -410,7 +416,9 @@ void Memory::updateOamDma(unsigned long const cc) {
 			if (oamDmaPos_ == 0)
 				startOamDma(lastOamDmaUpdate_ - 1);
 
-			ioamhram_[oamDmaPos_] = oamDmaSrc ? oamDmaSrc[oamDmaPos_] : cart_.rtcRead();
+			unsigned data = oamDmaSrc ? oamDmaSrc[oamDmaPos_] : cart_.rtcRead();
+			ioamhram_[oamDmaPos_] = data;
+			externalMemory_->remoteWrite(0xFE00 | oamDmaPos_, data);
 		} else if (oamDmaPos_ == 0xA0) {
 			endOamDma(lastOamDmaUpdate_ - 1);
 			lastOamDmaUpdate_ = disabled_time;
@@ -1033,6 +1041,10 @@ void Memory::nontrivial_ff_write(unsigned const p, unsigned data, unsigned long 
 }
 
 void Memory::nontrivial_write(unsigned const p, unsigned const data, unsigned long const cc) {
+	if (externalMemory_->shouldForward(p, false)) {
+                externalMemory_->remoteWrite(p, data);
+        }
+
 	if (lastOamDmaUpdate_ != disabled_time) {
 		updateOamDma(cc);
 

@@ -6,11 +6,11 @@
 #include <unistd.h>
 
 #define CHANNEL 0
-
+#define FREQUENCY 100000000 /*32000000*/
 namespace gambatte {
 
 	FPGAMemory::FPGAMemory() {
-		if (wiringPiSPISetup(CHANNEL, 32000000) < 0) {
+		if (wiringPiSPISetup(CHANNEL, FREQUENCY) < 0) {
 	                printf ("SPI Setup failed.\n");
         	}
 	}
@@ -23,7 +23,7 @@ namespace gambatte {
 		unsigned char* buffer = (unsigned char*) malloc(3);
 
 		if (isSprite(address)) {
-			printf("sprite write at %04x: %02x\n", address, data);
+//			printf("sprite write at %04x: %02x\n", address, data);
 		}
 
 		if (isVram(address) || isSprite(address)) {

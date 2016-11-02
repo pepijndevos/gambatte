@@ -15,7 +15,7 @@ namespace gambatte {
 		virtual unsigned getState(int lane) {
 			unsigned result = 0;
 			for (int i = 0; i < inputs_->size(); i++) {
-				result |= inputs_->at(i)->getState(result);
+				result |= inputs_->at(i)->getState(lane);
 			}
 			return result;
 		}

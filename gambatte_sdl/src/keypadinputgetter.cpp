@@ -30,18 +30,27 @@ KeypadInputGetter::KeypadInputGetter() {
 
 unsigned KeypadInputGetter::getState(int lane) {
 	unsigned result = 0;
+	if (lane == 1) {
+	        digitalWrite(PIN_LANE_0, HIGH);
+        	digitalWrite(PIN_LANE_1, LOW);
+	} else if (lane == 0) {
+                digitalWrite(PIN_LANE_0, LOW);
+                digitalWrite(PIN_LANE_1, HIGH);
+	}
 
 	if (digitalRead(PIN_B_OR_LEFT) == LOW) {
-		result |= InputGetter::LEFT;
+		result |= (lane == 1 ? InputGetter::LEFT : InputGetter::B);
 	}
         if (digitalRead(PIN_SELECT_OR_UP) == LOW) {
-                result |= InputGetter::UP;
+		printf("SELECT OR UP! (lane=%d) \n", lane);
+                result |= (lane == 1 ? InputGetter::UP : InputGetter::SELECT);
         }
         if (digitalRead(PIN_START_OR_DOWN) == LOW) {
-                result |= InputGetter::DOWN;
+//		printf("START OR DOWN! (lane=%d) \n", lane);
+                result |= (lane == 1 ? InputGetter::DOWN : InputGetter::START);
         }
         if (digitalRead(PIN_A_OR_RIGHT) == LOW) {
-                result |= InputGetter::RIGHT;
+		result |= (lane == 1 ? InputGetter::RIGHT : InputGetter::A);
         }
 
 	return result;

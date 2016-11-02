@@ -80,9 +80,9 @@ public:
 	}
 
 	void write(unsigned p, unsigned data, unsigned long cc) {
-		if (externalMemory_->shouldForward(p, false)) {
-			externalMemory_->remoteWrite(p, data);
-		}
+//		if (externalMemory_->shouldForward(p, false)) {
+//			externalMemory_->remoteWrite(p, data);
+//		}
 
 		if (cart_.wmem(p >> 12)) {
 			cart_.wmem(p >> 12)[p] = data;
