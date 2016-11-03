@@ -45,6 +45,7 @@ sourceFiles = Split('''
 			src/video/next_m0_time.cpp
 			src/video/ppu.cpp
 			src/video/sprite_mapper.cpp
+			src/monitorlistener.cpp
 		   ''')
 
 conf = env.Configure()

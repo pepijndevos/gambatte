@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #define CHANNEL 0
-#define FREQUENCY 100000000 /*32000000*/
+#define FREQUENCY 200000000 /*32000000*/
 namespace gambatte {
 
 	FPGAMemory::FPGAMemory() {

@@ -42,7 +42,7 @@ unsigned KeypadInputGetter::getState(int lane) {
 		result |= (lane == 1 ? InputGetter::LEFT : InputGetter::B);
 	}
         if (digitalRead(PIN_SELECT_OR_UP) == LOW) {
-		printf("SELECT OR UP! (lane=%d) \n", lane);
+//		printf("SELECT OR UP! (lane=%d) \n", lane);
                 result |= (lane == 1 ? InputGetter::UP : InputGetter::SELECT);
         }
         if (digitalRead(PIN_START_OR_DOWN) == LOW) {
