@@ -37,7 +37,10 @@ unsigned KeypadInputGetter::getState(int lane) {
                 digitalWrite(PIN_LANE_0, LOW);
                 digitalWrite(PIN_LANE_1, HIGH);
 	}
-
+	
+	for (int i=0; i< 1000000;i++){
+	}
+	
 	if (digitalRead(PIN_B_OR_LEFT) == LOW) {
 		result |= (lane == 1 ? InputGetter::LEFT : InputGetter::B);
 	}
