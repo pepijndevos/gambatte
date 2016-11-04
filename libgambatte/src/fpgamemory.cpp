@@ -22,10 +22,6 @@ namespace gambatte {
 		//printf("remoteWrite(%04x, %02x)\n", address, data);
 		unsigned char* buffer = (unsigned char*) malloc(3);
 
-		if (isSprite(address)) {
-//			printf("sprite write at %04x: %02x\n", address, data);
-		}
-
 		if (isVram(address) || isSprite(address)) {
 			buffer[0] = ((address >> 8) & 0xFF);
 		} else {
@@ -37,7 +33,6 @@ namespace gambatte {
 
 		wiringPiSPIDataRW(CHANNEL, buffer, 3);
 	        free(buffer);
-//		sleep(1);
 	}
 
 	unsigned FPGAMemory::remoteRead(unsigned address) {

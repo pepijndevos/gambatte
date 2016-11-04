@@ -47,6 +47,14 @@ unsigned long LyCounter::nextLineCycle(unsigned const lineCycle, unsigned long c
 	return tmp;
 }
 
+unsigned long LyCounter::nextVBlank(unsigned long const cc) const {
+        unsigned long tmp = time_ + (((144U - ly()) * 456U) << ds_);
+        if (tmp - cc > 70224U << ds_)
+                tmp -= 70224U << ds_;
+
+        return tmp;
+}
+
 unsigned long LyCounter::nextFrameCycle(unsigned long const frameCycle, unsigned long const cc) const {
 	unsigned long tmp = time_ + (((153U - ly()) * 456U + frameCycle) << ds_);
 	if (tmp - cc > 70224U << ds_)

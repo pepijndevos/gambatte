@@ -5,9 +5,9 @@
 #define VRAM_START 		0x8000
 #define VRAM_END 		0xA000
 #define SPRITE_START		0xFE00
-#define SPRITE_END		0xFE9F
+#define SPRITE_END		0xFEA0
 #define REGISTERS_START 	0xFF40
-#define REGISTERS_END 		0xFF4B
+#define REGISTERS_END 		0xFF4C
 
 namespace gambatte {
 

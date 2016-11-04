@@ -4,33 +4,25 @@
 #include "video/ppu.h"
 #include "memory.h"
 #include <stdio.h>
+#include <semaphore.h>
 
 namespace gambatte {
 
 class MonitorListener {
 public:
-	//MonitorListener(Memory *memory) {
-	//	memory_ = memory;
-	//}
-
-	//void update(unsigned long cycleCounter) {
-	//	cycleCounter_ = cycleCounter;
-	//}
-
 	void startListening();
+
+	void waitForHBlank(int line);
 
 	void waitForVBlank();
 
+	void dispatchHBlank();
+
 	void dispatchVBlank();
 
-	//unsigned long getCycleCounter() { return cycleCounter_; }
-
-	//Memory* getMemory() { return memory_; }
 private:
-	bool vblank_;
-	//unsigned long cycleCounter_;
-	//Memory *memory_;
-
+	sem_t vblankSemaphore;
+	sem_t hblankSemaphore;
 };
 
 }

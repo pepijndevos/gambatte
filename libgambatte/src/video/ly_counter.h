@@ -40,6 +40,9 @@ public:
 	unsigned lineTime() const { return lineTime_; }
 	unsigned ly() const { return ly_; }
 	unsigned long nextLineCycle(unsigned lineCycle, unsigned long cycleCounter) const;
+
+	unsigned long nextVBlank(unsigned long cycleCounter) const;
+
 	unsigned long nextFrameCycle(unsigned long frameCycle, unsigned long cycleCounter) const;
 	void reset(unsigned long videoCycles, unsigned long lastUpdate);
 	void setDoubleSpeed(bool ds);

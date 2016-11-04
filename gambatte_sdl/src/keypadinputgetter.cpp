@@ -40,8 +40,8 @@ unsigned KeypadInputGetter::getState(int lane) {
                 digitalWrite(PIN_LANE_1, HIGH);
 	}
 	
-	unsigned int microseconds=100;
-	usleep(microseconds);
+//	unsigned int microseconds=100;
+//	usleep(microseconds);
 	
 	
 	

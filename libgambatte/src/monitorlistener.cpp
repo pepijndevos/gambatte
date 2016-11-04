@@ -6,6 +6,8 @@
 #include "cpu.h"
 #include "video/ppu.h"
 #include <time.h>
+#include <semaphore.h>
+#include <unistd.h>
 
 #define PIN_HBLANK 5 // D14
 #define PIN_VBLANK 4 // D13
@@ -14,23 +16,24 @@ namespace gambatte {
 
 MonitorListener *listener;
 
-double hblankCount = 0;
+int hblankTarget = 0;
+int hblankCount = 0;
 double frameCount = 0;
 
 time_t start;
 
 void hblankHandler() {
-        if (hblankCount >= 144 && hblankCount < 145) {
-                frameCount ++;
-        }
+//	printf("hblank\n");
         hblankCount++;
+	if (hblankCount == hblankTarget) {
+//		printf("HBLANK = %d\n", hblankCount);
+		listener->dispatchHBlank();
+	}
 }
 
 void vblankHandler() {
-//	listener->getMemory()->resetCounters(listener->getCycleCounter());
-	//listener->getPPU()->getLyCounter()->reset(0, listener->getCycleCounter());
-	//listener->getMemory()->triggerVblankInterrupt(listener->getCycleCounter());
 	listener->dispatchVBlank();
+
         hblankCount = 0;
 	frameCount++;
         time_t end;
@@ -40,29 +43,38 @@ void vblankHandler() {
                 double vBlankFrequency = frameCount / (end - start);
                 frameCount = 0;
                 start = end;
-                printf("VBLANK Frequency = %fHz.\n", vBlankFrequency);
+                // printf("VBLANK Frequency = %fHz.\n", vBlankFrequency);
         }
 }
 
 void MonitorListener::startListening() {
-	printf("Started listening!\n");
+	sem_init(&vblankSemaphore, 0, 0);
+
 	listener = this;
 	time(&start);
-	wiringPiISR(PIN_VBLANK, INT_EDGE_RISING, &vblankHandler);
-	//wiringPiISR(PIN_HBLANK, INT_EDGE_RISING, &hblankHandler);
+
+	pinMode(PIN_HBLANK, INPUT);
+	pinMode(PIN_VBLANK, INPUT);
+
+	wiringPiISR(PIN_VBLANK, INT_EDGE_FALLING, &vblankHandler);
+	wiringPiISR(PIN_HBLANK, INT_EDGE_RISING, &hblankHandler);
+}
+
+void MonitorListener::waitForHBlank(int line) {
+	hblankTarget = line;
+	sem_wait(&hblankSemaphore);
 }
 
 void MonitorListener::waitForVBlank() {
-	vblank_ = false;
-	int x = 0;
-	while (!vblank_) {
-		x++;
-	}
-//	printf("VBLANK %d\n", x);
+	sem_wait(&vblankSemaphore);
+}
+
+void MonitorListener::dispatchHBlank() {
+	sem_post(&hblankSemaphore);
 }
 
 void MonitorListener::dispatchVBlank() {
-	vblank_ = true;
+	sem_post(&vblankSemaphore);
 }
 
 }
