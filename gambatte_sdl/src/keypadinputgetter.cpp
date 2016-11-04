@@ -2,6 +2,7 @@
 #include <wiringPi.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define PIN_B_OR_LEFT 		0
 #define PIN_SELECT_OR_UP 	1 
@@ -10,6 +11,7 @@
 
 #define PIN_LANE_0 			4
 #define PIN_LANE_1 			5
+
 
 namespace gambatte {
 
@@ -38,8 +40,10 @@ unsigned KeypadInputGetter::getState(int lane) {
                 digitalWrite(PIN_LANE_1, HIGH);
 	}
 	
-	for (int i=0; i< 1000000;i++){
-	}
+	unsigned int microseconds=100;
+	usleep(microseconds);
+	
+	
 	
 	if (digitalRead(PIN_B_OR_LEFT) == LOW) {
 		result |= (lane == 1 ? InputGetter::LEFT : InputGetter::B);
