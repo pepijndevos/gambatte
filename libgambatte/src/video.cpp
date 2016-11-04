@@ -86,9 +86,6 @@ LCD::LCD(unsigned char const *oamram, unsigned char const *vram,
 
 	reset(oamram, vram, false);
 	setVideoBuffer(0, 160);
-
-	listener_ = new MonitorListener(&ppu_);
-	listener_->startListening();
 }
 
 void LCD::reset(unsigned char const *oamram, unsigned char const *vram, bool cgb) {

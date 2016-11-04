@@ -46,6 +46,8 @@ CPU::CPU()
 , l(0x4D)
 , skip_(false)
 {
+	listener_ = new MonitorListener();
+	listener_->startListening();
 }
 
 void* debugThread(void* arg) {
@@ -541,17 +543,60 @@ void CPU::process(unsigned long const cycles) {
 	mem_.updateInput();
 
 	unsigned char a = a_;
+
 	unsigned long cycleCounter = cycleCounter_;
 
+	bool vblank = false;
+	unsigned long ly = mem_.getLCD()->getPPU()->getLyCounter()->ly();
+
+	listener_->waitForVBlank();
+
+	int frameCount = 0;
+
+	//printf("process()\n");
+	time_t start;
+	time(&start);
+
 	while (mem_.isActive()) {
+		unsigned long lastCc = cycleCounter;
 		unsigned short pc = pc_;
 
 		if (mem_.halted()) {
 			if (cycleCounter < mem_.nextEventTime()) {
 				unsigned long cycles = mem_.nextEventTime() - cycleCounter;
+				ly = (ly + cycles) % 70224;
 				cycleCounter += cycles + (-cycles & 3);
 			}
 		} else while (cycleCounter < mem_.nextEventTime()) {
+
+			unsigned lycounter = mem_.getLCD()->getPPU()->getLyCounter()->ly();
+			//printf("LY = %d, lycounter = %d\n", ly / 456, lycounter);
+
+			if (!vblank) {
+				if (ly >= 153*456) {
+					frameCount++;
+
+					time_t end;
+					time(&end);
+
+					printf("start = %d, end = %d\n", start, end);
+					if ((end - start) >= 1) {
+						double frequency = (end - start) / frameCount;
+						frameCount = 0;
+						start = end;
+						printf("Frequency = %f\n", frequency);
+					}
+
+					vblank = true;
+					listener_->waitForVBlank();
+					//printf("VBLANK! (ly = %d, lycounter = %d)\n", ly / 456, lycounter);
+				}
+			} else {
+				if (ly <= 144*456) {
+					vblank = false;
+				}
+			}
+
 			unsigned char opcode;
 
 			PC_READ(opcode);
@@ -2029,6 +2074,10 @@ void CPU::process(unsigned long const cycles) {
 				rst_n(0x38);
 				break;
 			}
+
+			//printf("cycles = %d\n", cycleCounter - lastCc);
+			ly = (ly + (cycleCounter - lastCc)) % (70224);
+			lastCc = cycleCounter;
 		}
 
 		pc_ = pc;

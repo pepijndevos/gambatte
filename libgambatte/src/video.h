@@ -27,7 +27,6 @@
 #include "video/m0_irq.h"
 #include "video/next_m0_time.h"
 #include "video/ppu.h"
-#include "monitorlistener.h"
 
 namespace gambatte {
 
@@ -143,6 +142,10 @@ public:
 	bool isCgb() const { return ppu_.cgb(); }
 	bool isDoubleSpeed() const { return ppu_.lyCounter().isDoubleSpeed(); }
 
+	PPU* getPPU() {
+		return &ppu_;
+	}
+
 private:
 	enum Event { event_mem,
 	             event_ly, event_last = event_ly };
@@ -198,7 +201,6 @@ private:
 	};
 
 	PPU ppu_;
-	MonitorListener *listener_;
 	unsigned long dmgColorsRgb32_[3 * 4];
 	unsigned char  bgpData_[8 * 8];
 	unsigned char objpData_[8 * 8];

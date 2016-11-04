@@ -3,6 +3,7 @@
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "cpu.h"
 #include "video/ppu.h"
 #include <time.h>
 
@@ -11,42 +12,7 @@
 
 namespace gambatte {
 
-//void* listenThread(void *arg) {
-//	PPU *ppu = (PPU*) arg;
-//
-//	bool vblankOccurred = false;
-//	printf("listen\n");
-//	int frameCount = 0;
-//	time_t rawTime;
-//	time (&rawTime);
-//	for (;;) {
-//		if (digitalRead(PIN_VBLANK) == HIGH) {
-//			if (!vblankOccurred) {
-//				frameCount++;
-//			//	ppu->doLyCountEvent();
-//				vblankOccurred = true;
-//			}
-//		} else {
-//			vblankOccurred = false;
-//		}
-//
-//		if (frameCount == 10) {
-//			time_t nextTime;
-//			time(&rawTime);
-//
-//			double frequency = frameCount / (nextTime - rawTime);
-//			printf("VBlank frequency = %d\n", frequency);
-//
-//			rawTime = nextTime;
-///			frameCount = 0;
-//		}
-//	}
-//
-//	return NULL;
-//}
-
-PPU *ppu;
-
+MonitorListener *listener;
 
 double hblankCount = 0;
 double frameCount = 0;
@@ -61,9 +27,12 @@ void hblankHandler() {
 }
 
 void vblankHandler() {
-//      printf("HBLANKs = %f.\n", hblankCount);
+//	listener->getMemory()->resetCounters(listener->getCycleCounter());
+	//listener->getPPU()->getLyCounter()->reset(0, listener->getCycleCounter());
+	//listener->getMemory()->triggerVblankInterrupt(listener->getCycleCounter());
+	listener->dispatchVBlank();
         hblankCount = 0;
-
+	frameCount++;
         time_t end;
         time(&end);
 
@@ -76,15 +45,24 @@ void vblankHandler() {
 }
 
 void MonitorListener::startListening() {
-//	pthread_t threadID;
-//
-//	if (pthread_create(&threadID, NULL, &listenThread, ppu_) != 0) {
-//		printf("Can't create thread.\n");
-//	}
-	ppu = ppu_;
+	printf("Started listening!\n");
+	listener = this;
 	time(&start);
 	wiringPiISR(PIN_VBLANK, INT_EDGE_RISING, &vblankHandler);
-	wiringPiISR(PIN_HBLANK, INT_EDGE_RISING, &hblankHandler);
+	//wiringPiISR(PIN_HBLANK, INT_EDGE_RISING, &hblankHandler);
+}
+
+void MonitorListener::waitForVBlank() {
+	vblank_ = false;
+	int x = 0;
+	while (!vblank_) {
+		x++;
+	}
+//	printf("VBLANK %d\n", x);
+}
+
+void MonitorListener::dispatchVBlank() {
+	vblank_ = true;
 }
 
 }

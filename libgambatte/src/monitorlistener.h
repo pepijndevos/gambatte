@@ -2,19 +2,34 @@
 #define MONITOR_LISTENER_H
 
 #include "video/ppu.h"
+#include "memory.h"
+#include <stdio.h>
 
 namespace gambatte {
 
-class MonitorListener { 
+class MonitorListener {
 public:
-	MonitorListener(PPU *ppu) {
-		ppu_ = ppu;
-	}
+	//MonitorListener(Memory *memory) {
+	//	memory_ = memory;
+	//}
+
+	//void update(unsigned long cycleCounter) {
+	//	cycleCounter_ = cycleCounter;
+	//}
 
 	void startListening();
 
+	void waitForVBlank();
+
+	void dispatchVBlank();
+
+	//unsigned long getCycleCounter() { return cycleCounter_; }
+
+	//Memory* getMemory() { return memory_; }
 private:
-	PPU* ppu_;
+	bool vblank_;
+	//unsigned long cycleCounter_;
+	//Memory *memory_;
 
 };
 

@@ -117,6 +117,7 @@ public:
 	unsigned lcdc() const { return p_.lcdc; }
 	void loadState(SaveState const &state, unsigned char const *oamram);
 	LyCounter const & lyCounter() const { return p_.lyCounter; }
+	LyCounter* getLyCounter() { return &p_.lyCounter; }
 	unsigned long now() const { return p_.now; }
 	void oamChange(unsigned long cc) { p_.spriteMapper.oamChange(cc); }
 	void oamChange(unsigned char const *oamram, unsigned long cc) { p_.spriteMapper.oamChange(oamram, cc); }
