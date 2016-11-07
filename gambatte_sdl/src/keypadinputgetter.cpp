@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #define PIN_B_OR_LEFT 		0
 #define PIN_SELECT_OR_UP 	1 
@@ -28,20 +29,32 @@ KeypadInputGetter::KeypadInputGetter() {
 
 	digitalWrite(PIN_LANE_0, HIGH);
 	digitalWrite(PIN_LANE_1, LOW);
+	pthread_create (&thread1, NULL, NULL,NULL);
 }
-
-unsigned KeypadInputGetter::getState(int lane) {
-	unsigned result = 0;
-	if (lane == 1) {
+	
+void *lanechoose (void *laneccc){
+	while (true) {
+		unsigned result = 0;
+		usleep(100);
+		int lane =1; 
 	        digitalWrite(PIN_LANE_0, HIGH);
         	digitalWrite(PIN_LANE_1, LOW);
-	} else if (lane == 0) {
+		usleep(100);
+		int lane = 0;
                 digitalWrite(PIN_LANE_0, LOW);
                 digitalWrite(PIN_LANE_1, HIGH);
+	        
 	}
+	return NULL;
+}	
+
+
+
+unsigned KeypadInputGetter::getState(int lane) {
 	
-	unsigned int microseconds=100;
-	usleep(microseconds);
+	
+	//unsigned int microseconds=100;
+	//usleep(microseconds);
 	
 	
 	
