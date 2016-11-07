@@ -57,7 +57,7 @@ void MonitorListener::startListening() {
 	pinMode(PIN_VBLANK, INPUT);
 
 	wiringPiISR(PIN_VBLANK, INT_EDGE_FALLING, &vblankHandler);
-	wiringPiISR(PIN_HBLANK, INT_EDGE_RISING, &hblankHandler);
+//	wiringPiISR(PIN_HBLANK, INT_EDGE_RISING, &hblankHandler);
 }
 
 void MonitorListener::waitForHBlank(int line) {

@@ -20,6 +20,19 @@ namespace gambatte {
 		virtual void remoteWrite(unsigned address, unsigned data);
 
 		virtual unsigned remoteRead(unsigned address);
+	private:
+
+		/**
+		 * Formats and writes the address to the first two bytes of the buffer.
+		 * @param buffer
+		 *  The buffer to write the address to.
+		 * @param address
+		 *  The address to write.
+		 */
+		void writeAddressToBuffer(unsigned char* buffer, unsigned address);
+
+		unsigned char writeBuffer[3];
+		unsigned char readBuffer[3];
 	};
 }
 
