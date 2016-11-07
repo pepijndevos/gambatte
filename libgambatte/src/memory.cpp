@@ -525,7 +525,7 @@ unsigned Memory::nontrivial_ff_read(unsigned const p, unsigned long const cc) {
 	case 0x41:
 		return ioamhram_[0x141] | lcd_.getStat(ioamhram_[0x145], cc);
 	case 0x44:
-		//return externalMemory_->remoteRead(0xFF44);
+//		return externalMemory_->remoteRead(0xFF44);
 		return lcd_.getLyReg(cc);
 	case 0x69:
 		return lcd_.cgbBgColorRead(ioamhram_[0x168] & 0x3F, cc);

@@ -12,10 +12,10 @@
 namespace gambatte {
 
 	FPGAMemory::FPGAMemory() {
-		if (wiringPiSPISetup(CHANNEL_WRITE, FREQUENCY) < 0) {
+		if (wiringPiSPISetup(CHANNEL_WRITE, FREQUENCY) != 0) {
 	                printf ("WRITE SPI Setup failed.\n");
         	}
-		if (wiringPiSPISetup(CHANNEL_READ, FREQUENCY) < 0) {
+		if (wiringPiSPISetup(CHANNEL_READ, FREQUENCY) != 0) {
 			printf ("READ SPI Setup failed.\n");
 		}
 	}
@@ -42,7 +42,10 @@ namespace gambatte {
 
 	unsigned FPGAMemory::remoteRead(unsigned address) {
 		writeAddressToBuffer(readBuffer, address);
+//		printf("REQ: %02x %02x %02x\n", readBuffer[0], readBuffer[1], readBuffer[2]);
 		wiringPiSPIDataRW(CHANNEL_READ, readBuffer, 3);
+//		printf("%04x: %02x\n", address, readBuffer[2]);
+//		printf("REC: %02x %02x %02x\n", readBuffer[0], readBuffer[1], readBuffer[2]);
 		return readBuffer[2];
 	}
 }

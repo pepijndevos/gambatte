@@ -546,7 +546,6 @@ void CPU::process(unsigned long const cycles) {
 	mem_.updateInput();
 
 	unsigned char a = a_;
-
 	unsigned long cycleCounter = cycleCounter_;
 
 	bool vblank = false;
@@ -554,14 +553,13 @@ void CPU::process(unsigned long const cycles) {
 	LyCounter *lyCounter = mem_.getLCD()->getPPU()->getLyCounter();
 	unsigned long ly = lyCounter->ly();
 
-//	unsigned long ly = lyCounter->ly();
-
 	unsigned long currentFrameCycle = lyCounter->frameCycles(cycleCounter);
 	unsigned long nextFrameCycle = lyCounter->nextFrameCycle(0, cycleCounter);
 	unsigned long cyclesTillVBlank = nextFrameCycle - currentFrameCycle;
 
-	if (ly != 144)
-		listener_->waitForVBlank();
+//	if (ly != 144) {
+//		listener_->waitForVBlank();
+// 	}
 
 //	printf("LY = %d\n", ly);
 //	listener_->waitForHBlank(ly);
@@ -2087,7 +2085,7 @@ void CPU::process(unsigned long const cycles) {
 
 			if (cyclesTillVBlank <= 0 || !vblank) {
 				vblank = true;
-				listener_->waitForVBlank();
+//				listener_->waitForVBlank();
 			}
 
 			lastCc = cycleCounter;
