@@ -20,6 +20,12 @@ namespace gambatte {
 		virtual void remoteWrite(unsigned address, unsigned data);
 
 		virtual unsigned remoteRead(unsigned address);
+	private:
+
+		void writeAddressToBuffer(unsigned char* buffer, unsigned address);
+
+		unsigned char writeBuffer[3];
+		unsigned char readBuffer[3];
 	};
 }
 
