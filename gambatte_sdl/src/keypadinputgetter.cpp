@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <time.h>
 
 #define PIN_B_OR_LEFT 		0
 #define PIN_SELECT_OR_UP 	1 
@@ -16,8 +17,6 @@
 
 namespace gambatte {
 
-void *lanechoose (void *laneccc);
-
 KeypadInputGetter::KeypadInputGetter() {
 	wiringPiSetup();
 
@@ -26,33 +25,9 @@ KeypadInputGetter::KeypadInputGetter() {
 	pinMode(PIN_START_OR_DOWN, INPUT);
 	pinMode(PIN_A_OR_RIGHT, INPUT);
 
-	pinMode(PIN_LANE_0, OUTPUT);
-	pinMode(PIN_LANE_1, OUTPUT);
-
-	digitalWrite(PIN_LANE_0, HIGH);
-	digitalWrite(PIN_LANE_1, LOW);
-
-	pthread_t thread1;
-	pthread_create (&thread1, NULL, &lanechoose, NULL);
+	pinMode(PIN_LANE_0, INPUT);
+	pinMode(PIN_LANE_1, INPUT);
 }
-	
-void *lanechoose (void *laneccc){
-	while (true) {
-		unsigned result = 0;
-		usleep(100);
-		int lane =1; 
-	        digitalWrite(PIN_LANE_0, HIGH);
-        	digitalWrite(PIN_LANE_1, LOW);
-		usleep(100);
-		lane = 0;
-                digitalWrite(PIN_LANE_0, LOW);
-                digitalWrite(PIN_LANE_1, HIGH);
-	        
-	}
-	return NULL;
-}	
-
-
 
 unsigned KeypadInputGetter::getState(int lane) {
 	unsigned result = 0;
@@ -60,15 +35,13 @@ unsigned KeypadInputGetter::getState(int lane) {
 	if (digitalRead(PIN_B_OR_LEFT) == LOW) {
 		result |= (lane == 1 ? InputGetter::LEFT : InputGetter::B);
 	}
-        if (digitalRead(PIN_SELECT_OR_UP) == LOW) {
-//		printf("SELECT OR UP! (lane=%d) \n", lane);
-                result |= (lane == 1 ? InputGetter::UP : InputGetter::SELECT);
-        }
-        if (digitalRead(PIN_START_OR_DOWN) == LOW) {
-//		printf("START OR DOWN! (lane=%d) \n", lane);
-                result |= (lane == 1 ? InputGetter::DOWN : InputGetter::START);
-        }
-        if (digitalRead(PIN_A_OR_RIGHT) == LOW) {
+       	if (digitalRead(PIN_SELECT_OR_UP) == LOW) {
+      		result |= (lane == 1 ? InputGetter::UP : InputGetter::SELECT);
+	}
+     	if (digitalRead(PIN_START_OR_DOWN) == LOW) {
+     		result |= (lane == 1 ? InputGetter::DOWN : InputGetter::START);
+       	}
+	if (digitalRead(PIN_A_OR_RIGHT) == LOW) {
 		result |= (lane == 1 ? InputGetter::RIGHT : InputGetter::A);
         }
 

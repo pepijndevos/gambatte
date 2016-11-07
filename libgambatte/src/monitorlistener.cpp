@@ -9,8 +9,8 @@
 #include <semaphore.h>
 #include <unistd.h>
 
-#define PIN_HBLANK 5 // D14
-#define PIN_VBLANK 4 // D13
+#define PIN_HBLANK 7 // D04
+#define PIN_VBLANK 6 // D15
 
 namespace gambatte {
 
@@ -19,19 +19,23 @@ MonitorListener *listener;
 int hblankTarget = 0;
 int hblankCount = 0;
 double frameCount = 0;
+bool firstVBlank = false;
 
 time_t start;
 
 void hblankHandler() {
-//	printf("hblank\n");
+	if (!firstVBlank) {
+		return;
+	}
+
         hblankCount++;
 	if (hblankCount == hblankTarget) {
-//		printf("HBLANK = %d\n", hblankCount);
 		listener->dispatchHBlank();
 	}
 }
 
 void vblankHandler() {
+	firstVBlank = true;
 	listener->dispatchVBlank();
 
         hblankCount = 0;
@@ -57,7 +61,7 @@ void MonitorListener::startListening() {
 	pinMode(PIN_VBLANK, INPUT);
 
 	wiringPiISR(PIN_VBLANK, INT_EDGE_FALLING, &vblankHandler);
-//	wiringPiISR(PIN_HBLANK, INT_EDGE_RISING, &hblankHandler);
+	wiringPiISR(PIN_HBLANK, INT_EDGE_FALLING, &hblankHandler);
 }
 
 void MonitorListener::waitForHBlank(int line) {

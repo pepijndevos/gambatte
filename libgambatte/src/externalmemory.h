@@ -8,6 +8,7 @@
 #define SPRITE_END		0xFEA0
 #define REGISTERS_START 	0xFF40
 #define REGISTERS_END 		0xFF4C
+#define REGISTER_P1		0xFF00
 
 namespace gambatte {
 
@@ -17,7 +18,7 @@ namespace gambatte {
 	class ExternalMemory {
 
 	public:
-		
+
 		/**
 		 * Determines whether the provided address should be forwarded to the remote device or not.
 		 * 
@@ -29,7 +30,7 @@ namespace gambatte {
 		 *  True whether the address should be forwarded, false otherwise.
 		 */
 		bool shouldForward(unsigned long address, bool lastByteOnly) {
-			return isVram(address) || isSprite(address) || isGpuRegister(address, lastByteOnly);
+			return isP1(address) || isVram(address) || isSprite(address) || isGpuRegister(address, lastByteOnly);
 		}
 
 		/**
@@ -49,6 +50,14 @@ namespace gambatte {
 		virtual unsigned remoteRead(unsigned address) = 0;
 
 	protected:
+
+		/**
+		 *
+		 */
+		static bool isP1(unsigned address) {
+			return address = REGISTER_P1;
+		}
+
 		/**
 		 * Determines whether an address is located in the VRAM of the gameboy.
 		 * @param address

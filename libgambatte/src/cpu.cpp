@@ -554,7 +554,7 @@ void CPU::process(unsigned long const cycles) {
 	unsigned long ly = lyCounter->ly();
 
 	unsigned long currentFrameCycle = lyCounter->frameCycles(cycleCounter);
-	unsigned long nextFrameCycle = lyCounter->nextFrameCycle(0, cycleCounter);
+	unsigned long nextFrameCycle = lyCounter->nextVBlank(cycleCounter);
 	unsigned long cyclesTillVBlank = nextFrameCycle - currentFrameCycle;
 
 //	if (ly != 144) {
@@ -562,7 +562,7 @@ void CPU::process(unsigned long const cycles) {
 // 	}
 
 //	printf("LY = %d\n", ly);
-//	listener_->waitForHBlank(ly);
+	listener_->waitForHBlank(ly);
 
 	while (mem_.isActive()) {
 		unsigned long lastCc = cycleCounter;
