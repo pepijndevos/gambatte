@@ -16,6 +16,8 @@
 
 namespace gambatte {
 
+void *lanechoose (void *laneccc);
+
 KeypadInputGetter::KeypadInputGetter() {
 	wiringPiSetup();
 
@@ -29,7 +31,9 @@ KeypadInputGetter::KeypadInputGetter() {
 
 	digitalWrite(PIN_LANE_0, HIGH);
 	digitalWrite(PIN_LANE_1, LOW);
-	pthread_create (&thread1, NULL, NULL,NULL);
+
+	pthread_t thread1;
+	pthread_create (&thread1, NULL, &lanechoose, NULL);
 }
 	
 void *lanechoose (void *laneccc){
@@ -40,7 +44,7 @@ void *lanechoose (void *laneccc){
 	        digitalWrite(PIN_LANE_0, HIGH);
         	digitalWrite(PIN_LANE_1, LOW);
 		usleep(100);
-		int lane = 0;
+		lane = 0;
                 digitalWrite(PIN_LANE_0, LOW);
                 digitalWrite(PIN_LANE_1, HIGH);
 	        
@@ -51,6 +55,8 @@ void *lanechoose (void *laneccc){
 
 
 unsigned KeypadInputGetter::getState(int lane) {
+	unsigned result = 0;
+
 	if (digitalRead(PIN_B_OR_LEFT) == LOW) {
 		result |= (lane == 1 ? InputGetter::LEFT : InputGetter::B);
 	}
