@@ -5,6 +5,9 @@
 
 namespace gambatte {
 
+	/**
+	 * Provides an implementation for external memory on an FPGA.
+	 */
 	class FPGAMemory : public ExternalMemory {
 	public:
 		/**
@@ -32,7 +35,7 @@ namespace gambatte {
 		void writeAddressToBuffer(unsigned char* buffer, unsigned address);
 
 		unsigned char writeBuffer[3];
-		unsigned char readBuffer[3];
+		unsigned char readBuffer[2];
 	};
 }
 

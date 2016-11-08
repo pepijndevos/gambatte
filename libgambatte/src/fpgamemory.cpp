@@ -7,7 +7,7 @@
 
 #define CHANNEL_WRITE 0
 #define CHANNEL_READ 1
-#define FREQUENCY 100000000 /*32000000*/
+#define FREQUENCY 10000000 /*32000000*/
 
 namespace gambatte {
 
@@ -42,10 +42,11 @@ namespace gambatte {
 
 	unsigned FPGAMemory::remoteRead(unsigned address) {
 		writeAddressToBuffer(readBuffer, address);
-//		printf("REQ: %02x %02x %02x\n", readBuffer[0], readBuffer[1], readBuffer[2]);
-		wiringPiSPIDataRW(CHANNEL_READ, readBuffer, 3);
-//		printf("%04x: %02x\n", address, readBuffer[2]);
-		printf("REC: %02x %02x %02x\n", readBuffer[0], readBuffer[1], readBuffer[2]);
-		return readBuffer[2];
+		wiringPiSPIDataRW(CHANNEL_READ, readBuffer, 2);
+
+		unsigned result = readBuffer[1] | (readBuffer[0] << 8);
+
+//		printf("REC: %02x %02x [%04x]\n", readBuffer[0], readBuffer[1], result);
+		return result;
 	}
 }

@@ -1529,6 +1529,12 @@ static void saveSpriteList(PPUPriv const &p, SaveState &ss) {
 	ss.ppu.currentSprite = p.currentSprite;
 }
 
+PPU::PPU(NextM0Time &nextM0Time, unsigned char const *oamram, unsigned char const *vram)
+: p_(nextM0Time, oamram, vram)
+{
+        listener_.startListening(this);
+}
+
 void PPU::saveState(SaveState &ss) const {
 	p_.spriteMapper.saveState(ss);
 	ss.ppu.videoCycles = lcdcEn(p_) ? p_.lyCounter.frameCycles(p_.now) : 0;

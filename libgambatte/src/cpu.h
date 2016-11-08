@@ -20,7 +20,6 @@
 #define CPU_H
 
 #include "memory.h"
-#include "monitorlistener.h"
 
 namespace gambatte {
 
@@ -83,7 +82,7 @@ public:
 	}
 
 private:
-	MonitorListener *listener_;
+//	MonitorListener *listener_;
 	Memory mem_;
 	unsigned long cycleCounter_;
 	unsigned short pc_;

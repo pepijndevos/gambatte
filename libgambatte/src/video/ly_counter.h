@@ -38,7 +38,8 @@ public:
 	}
 
 	unsigned lineTime() const { return lineTime_; }
-	unsigned ly() const { return ly_; }
+	unsigned ly(unsigned value) { ly_ = value; }
+	unsigned ly() const { return ly_; } //  return listener_->getHBlank(); }
 	unsigned long nextLineCycle(unsigned lineCycle, unsigned long cycleCounter) const;
 
 	unsigned long nextVBlank(unsigned long cycleCounter) const;

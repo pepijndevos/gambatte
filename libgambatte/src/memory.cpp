@@ -39,7 +39,10 @@ Memory::Memory(Interrupter const &interrupter, ExternalMemory *externalMemory)
 , serialCnt_(0)
 , blanklcd_(false)
 {
-	this->externalMemory_ = externalMemory;
+	externalMemory_ = externalMemory;
+//	listener_ = new MonitorListener();
+//	listener_->startListening();
+
 	intreq_.setEventTime<intevent_blit>(144 * 456ul);
 	intreq_.setEventTime<intevent_end>(0);
 }
@@ -525,8 +528,15 @@ unsigned Memory::nontrivial_ff_read(unsigned const p, unsigned long const cc) {
 	case 0x41:
 		return ioamhram_[0x141] | lcd_.getStat(ioamhram_[0x145], cc);
 	case 0x44:
-//		return externalMemory_->remoteRead(0xFF44);
+	{
+//		return externalMemory_->remoteRead(0xFF44) / 3;
 		return lcd_.getLyReg(cc);
+		//unsigned hblank = listener_->getHBlank();
+		//if (hblank == 0x48 || hblank == 0x88) {
+			//printf("hblank = %02x\n", hblank);
+		//}
+		//return listener_->getHBlank();
+	}
 	case 0x69:
 		return lcd_.cgbBgColorRead(ioamhram_[0x168] & 0x3F, cc);
 	case 0x6B:

@@ -26,11 +26,9 @@
 #include "tima.h"
 #include "video.h"
 #include "externalmemory.h"
-#include "monitorlistener.h"
 #include <stdio.h>
 namespace gambatte {
 
-class MonitorListener;
 class InputGetter;
 class FilterInfo;
 
@@ -130,25 +128,12 @@ public:
 		return externalMemory_;
 	}
 
-	LCD* getLCD() {
-		return &lcd_;
-	}
-
-	void triggerVblankInterrupt(unsigned long cc) {
-
-//		unsigned stat = read(0xFF41, 0);
-//		ff_write(0xFF44, 0, cc);
-		//lcd_.getPPU()->getLyCounter()->reset(144,0);
-		//LyCounter *counter = lcd_.getPPU()->getLyCounter();
-		//counter->reset(144*456, 0);
-//		resetCounters(0);
-//		intreq_.setEventTime<intevent_blit>(cc);
-//		intreq_.setEventTime<intevent_video>(cc);
-		//printf("ly=%d\n", counter->ly());
-	}
+//	LCD* getLCD() {
+//		return &lcd_;
+//	}
 
 private:
-
+//	MonitorListener *listener_;
 	ExternalMemory *externalMemory_;
 	Cartridge cart_;
 	unsigned char ioamhram_[0x200];

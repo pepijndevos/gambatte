@@ -6,6 +6,10 @@
 
 namespace gambatte {
 
+	/**
+	 * Provides an implementation for an input getter, combining
+	 * multiple input getters into one.
+	 */
 	class MultipadInputGetter : public InputGetter {
 	public:
 		MultipadInputGetter(std::vector<InputGetter*> *inputs) {

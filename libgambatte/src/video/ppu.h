@@ -23,6 +23,7 @@
 #include "ly_counter.h"
 #include "sprite_mapper.h"
 #include "gbint.h"
+#include "monitorlistener.h"
 #include <cstddef>
 
 namespace gambatte {
@@ -96,11 +97,16 @@ struct PPUPriv {
 	PPUPriv(NextM0Time &nextM0Time, unsigned char const *oamram, unsigned char const *vram);
 };
 
-class PPU {
+class PPU : public BlankAcceptor {
 public:
-	PPU(NextM0Time &nextM0Time, unsigned char const *oamram, unsigned char const *vram)
-	: p_(nextM0Time, oamram, vram)
-	{
+	PPU(NextM0Time &nextM0Time, unsigned char const *oamram, unsigned char const *vram);
+
+        virtual void acceptHBlank(int hblank) {
+		printf("accept\n");
+		setLy(hblank);
+	}
+
+	virtual void acceptVBlank() {
 	}
 
 	unsigned long * bgPalette() { return p_.bgPalette; }
@@ -117,7 +123,10 @@ public:
 	unsigned lcdc() const { return p_.lcdc; }
 	void loadState(SaveState const &state, unsigned char const *oamram);
 	LyCounter const & lyCounter() const { return p_.lyCounter; }
-	LyCounter* getLyCounter() { return &p_.lyCounter; }
+	void setLy(unsigned value) {
+		printf("setLy\n");
+		p_.lyCounter.ly(value); 
+	}
 	unsigned long now() const { return p_.now; }
 	void oamChange(unsigned long cc) { p_.spriteMapper.oamChange(cc); }
 	void oamChange(unsigned char const *oamram, unsigned long cc) { p_.spriteMapper.oamChange(oamram, cc); }
@@ -138,6 +147,7 @@ public:
 	void update(unsigned long cc);
 
 private:
+	MonitorListener listener_;
 	PPUPriv p_;
 };
 
